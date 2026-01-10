@@ -1,100 +1,85 @@
 "use client";
-
 import { Canvas } from "@react-three/fiber";
-import { 
-  useGLTF, 
-  OrbitControls, 
-  Stage, 
-  Center,
-  Float
-} from "@react-three/drei";
-import { Suspense, useLayoutEffect } from "react";
-import { X, MousePointer2, Move, ZoomIn } from "lucide-react";
-import * as THREE from "three"; // FIX: Added missing THREE import
+import { useGLTF, OrbitControls, Stage, PerspectiveCamera, Environment, Float } from "@react-three/drei";
+import { Suspense } from "react";
+import { X, Box, Info, Share2 } from "lucide-react";
 import { motion } from "framer-motion";
 
-const Model = ({ url }: { url: string }) => {
-  const { scene } = useGLTF(url);
-  
-  useLayoutEffect(() => {
-    scene.traverse((obj) => {
-      if ((obj as THREE.Mesh).isMesh) {
-        const mesh = obj as THREE.Mesh;
-        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
-        
-        materials.forEach((mat) => {
-          if (mat instanceof THREE.MeshStandardMaterial) {
-            // FIX: Ensure textures look rich and not 'washed out'
-            if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
-            mat.envMapIntensity = 1.5;
-          }
-        });
-      }
-    });
-  }, [scene]);
-
-  return <primitive object={scene} />;
-};
-
-export const InteractiveViewer = ({ modelUrl, onClose, title }: { modelUrl: string; onClose: () => void; title?: string }) => {
+export const InteractiveViewer = ({ modelUrl, title, onClose }: any) => {
   return (
     <motion.div 
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      className="fixed inset-0 z-[300] bg-marathon-dark/98 backdrop-blur-3xl flex flex-col"
+      initial={{ opacity: 0 }} animate={{ opacity: 1 }}
+      className="fixed inset-0 z-[600] bg-white flex flex-col md:flex-row"
     >
-      <div className="p-6 md:p-10 flex justify-between items-center border-b border-white/5 bg-black/20">
-        <div className="flex flex-col">
-          <span className="text-[10px] font-black text-marathon-teal uppercase tracking-[0.5em] mb-1">Marathon Prototyping</span>
-          <h2 className="text-2xl font-heading font-black italic uppercase text-white leading-none">{title || "360° Inspection"}</h2>
+      {/* 1. SIDEBAR INFO (Editorial Style) */}
+      <div className="w-full md:w-[400px] border-r border-slate-100 p-12 flex flex-col justify-between bg-slate-50/50">
+        <div className="space-y-8">
+          <button onClick={onClose} className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-slate-400 hover:text-black transition-colors">
+            <X size={14}/> Exit Gallery
+          </button>
+          
+          <div>
+            <span className="text-marathon-teal font-black text-[10px] uppercase tracking-widest">Model Inspection</span>
+            <h2 className="text-5xl font-heading font-black italic uppercase leading-none mt-2">{title}</h2>
+          </div>
+
+          <div className="space-y-6">
+            <SpecRow label="Exterior Finish" value="PBR Metallic" />
+            <SpecRow label="Lighting" value="Studio High-Key" />
+            <SpecRow label="Tessellation" value="Ultra-High" />
+          </div>
         </div>
-        <button onClick={onClose} className="w-14 h-14 rounded-full bg-white/5 hover:bg-marathon-teal hover:text-black transition-all flex items-center justify-center group border border-white/10">
-          <X className="group-hover:rotate-90 transition-transform" size={24} />
-        </button>
+
+        <div className="flex gap-4">
+            <button className="flex-1 bg-black text-white py-4 rounded-xl font-black text-[10px] uppercase tracking-widest">Book Now</button>
+            <button className="w-14 h-14 rounded-xl border border-slate-200 flex items-center justify-center hover:bg-white transition-all"><Share2 size={18}/></button>
+        </div>
       </div>
 
-      <div className="flex-1 relative cursor-grab active:cursor-grabbing">
-        <Canvas 
-          shadows 
-          dpr={[1, 2]} 
-          // FIX: ACES Filmic mapping makes the car look realistic like Sketchfab
-          gl={{ 
-            antialias: true,
-            toneMapping: THREE.ACESFilmicToneMapping,
-            toneMappingExposure: 1.2
-          }}
-        >
+      {/* 2. THE 3D STUDIO CANVAS */}
+      <div className="flex-1 relative bg-white">
+        {/* Visual Background Element */}
+        <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 opacity-[0.03] pointer-events-none select-none">
+            <h3 className="text-[30vw] font-heading font-black italic uppercase">MARATHON</h3>
+        </div>
+
+        <Canvas shadows dpr={[1, 2]} camera={{ position: [0, 0, 15], fov: 30 }}>
           <Suspense fallback={null}>
-            <Stage intensity={0.5} environment="city" adjustCamera={1.8} shadows={{ type: 'contact', opacity: 0.6, blur: 3 }}>
-              <Center>
-                <Float speed={1.5} rotationIntensity={0.2} floatIntensity={0.5}>
-                    <Model url={modelUrl} />
-                </Float>
-              </Center>
+            {/* STAGE provides the professional white studio lighting automatically */}
+            <Stage intensity={0.6} environment="city" adjustCamera={1.8} shadows={{ type: 'contact', opacity: 0.2, blur: 3 }}>
+              <Float speed={2} rotationIntensity={0.2} floatIntensity={0.5}>
+                <Model url={modelUrl} />
+              </Float>
             </Stage>
-            <OrbitControls makeDefault minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2.1} enablePan={false} />
+            <OrbitControls makeDefault minPolarAngle={Math.PI / 4} maxPolarAngle={Math.PI / 2.1} enablePan={false} dampingFactor={0.05} />
           </Suspense>
         </Canvas>
 
-        <div className="absolute bottom-12 left-1/2 -translate-x-1/2 flex gap-4 md:gap-8">
-           <div className="flex items-center gap-2 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              <MousePointer2 size={14} className="text-marathon-teal"/>
-              <span className="text-[10px] text-white font-black uppercase tracking-widest">Rotate</span>
-           </div>
-           <div className="flex items-center gap-2 bg-black/50 backdrop-blur-md px-4 py-2 rounded-full border border-white/10">
-              <ZoomIn size={14} className="text-marathon-teal"/>
-              <span className="text-[10px] text-white font-black uppercase tracking-widest">Zoom</span>
-           </div>
-        </div>
-      </div>
-      
-      <div className="p-8 bg-black/40 border-t border-white/5 flex justify-center items-center gap-12">
-        <div className="flex flex-col items-center">
-            <span className="text-[10px] text-slate-500 font-bold uppercase tracking-widest mb-1">Visual Fidelity</span>
-            <span className="text-marathon-teal font-heading font-bold italic text-xl">4K PBR RENDER</span>
+        {/* Interaction HUD */}
+        <div className="absolute bottom-10 left-1/2 -translate-x-1/2 flex items-center gap-10">
+           <HUDItem icon={<Box size={16}/>} text="Drag to Rotate" />
+           <div className="h-4 w-px bg-slate-200" />
+           <HUDItem icon={<Info size={16}/>} text="Scroll to Zoom" />
         </div>
       </div>
     </motion.div>
   );
 };
+
+const Model = ({ url }: { url: string }) => {
+  const { scene } = useGLTF(url);
+  return <primitive object={scene} />;
+};
+
+const SpecRow = ({ label, value }: any) => (
+  <div className="flex justify-between border-b border-slate-200 pb-2">
+    <span className="text-[10px] font-bold text-slate-400 uppercase">{label}</span>
+    <span className="text-xs font-black uppercase tracking-tighter">{value}</span>
+  </div>
+);
+
+const HUDItem = ({ icon, text }: any) => (
+    <div className="flex items-center gap-3 text-slate-400">
+        {icon} <span className="text-[10px] font-black uppercase tracking-widest">{text}</span>
+    </div>
+);

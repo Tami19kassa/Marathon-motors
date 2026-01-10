@@ -1,19 +1,19 @@
 @import "tailwindcss";
 
 @theme {
-  /* THE AUTOMOTIVE PALETTE */
-  --color-marathon-dark: #050505;    /* Asphalt Black */
-  --color-marathon-steel: #0f1115;   /* Metallic Texture */
-  --color-marathon-teal: #00e5ff;    /* EV Energy Pulse */
-  --color-marathon-gold: #facc15;    /* Haile's Olympic Gold */
+  --color-marathon-dark: #050505;
+  --color-marathon-steel: #ffffff;
+  --color-marathon-teal: #00e5ff;
   
-  /* TYPOGRAPHY */
-  --font-sans: "Inter Tight", system-ui;
-  --font-heading: "Space Grotesk", sans-serif; /* Wide, Technical font */
+  --font-heading: "Space Grotesk", sans-serif;
   
-  /* SHADOWS */
-  --shadow-glow: 0 0 40px -10px rgba(0, 229, 255, 0.3);
+  /* The "Expensive" Shadow */
+  --shadow-premium: 0 20px 80px -15px rgba(0, 0, 0, 0.15);
+  /* The "Hairline" border */
+  --border-thin: 1px solid rgba(0, 0, 0, 0.05);
 }
+
+ 
 
 @layer base {
   body {

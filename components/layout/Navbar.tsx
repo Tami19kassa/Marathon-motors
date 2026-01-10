@@ -34,59 +34,41 @@ export const Navbar = () => {
   return (
     <>
       <motion.header
-        className={`fixed top-0 w-full z-[100] transition-all duration-500 ${
-          isLightSection 
-            ? 'bg-white/90 backdrop-blur-xl border-b border-slate-200 py-4' 
-            : 'bg-transparent py-8'
-        }`}
-        initial={{ y: -100 }}
-        animate={{ y: 0 }}
-      >
-        <div className="max-w-[1440px] mx-auto px-6 md:px-12 flex items-center justify-between relative">
-          
-          {/* 1. BRAND LOGO */}
-          <Link href="/" className="flex items-center gap-3 z-50">
-            <div className={`relative w-10 h-10 md:w-12 md:h-12 rounded-full overflow-hidden border-2 transition-colors ${isLightSection ? 'border-marathon-teal' : 'border-white/20'}`}>
-                <Image src="/logo.png" alt="Marathon" fill className="object-cover bg-white" />
-            </div>
-            <div className="flex flex-col">
-              <span className={`text-xl font-heading font-black italic tracking-tighter leading-none transition-colors ${isLightSection ? 'text-black' : 'text-white'}`}>MARATHON</span>
-              <span className="text-[8px] tracking-[0.3em] text-marathon-teal font-bold uppercase">Engineering</span>
-            </div>
-          </Link>
+  className={`fixed top-8 left-1/2 -translate-x-1/2 w-[92%] max-w-[1440px] z-[100] transition-all duration-500 rounded-full border ${
+    isLightSection 
+      ? 'bg-white/80 border-slate-200 shadow-premium text-black' 
+      : 'bg-black/20 border-white/10 text-white shadow-none'
+  } backdrop-blur-2xl`}
+>
+  <div className="px-10 py-5 flex items-center justify-between">
+    <Link href="/" className="flex items-center gap-3 group">
+      <div className="relative w-10 h-10 rounded-full overflow-hidden border-2 border-marathon-teal bg-white shadow-xl group-hover:scale-110 transition-transform">
+        <Image src="/logo.png" alt="Logo" fill className="object-cover" />
+      </div>
+      <div className="flex flex-col">
+        <span className="font-heading font-black italic text-xl tracking-tighter uppercase leading-none">Marathon</span>
+        <span className="text-[7px] font-black tracking-[0.4em] text-marathon-teal uppercase">Engineering</span>
+      </div>
+    </Link>
 
-          {/* 2. CENTERED LINKS (Desktop) */}
-          <div className="hidden lg:flex items-center gap-10 absolute left-1/2 -translate-x-1/2">
-            {navLinks.map((link) => (
-              <button
-                key={link.name}
-                onClick={() => handleScroll(link.id)}
-                className={`text-[11px] font-black uppercase tracking-[0.2em] transition-colors hover:text-marathon-teal ${
-                    isLightSection ? 'text-slate-600' : 'text-slate-300'
-                }`}
-              >
-                {link.name}
-              </button>
-            ))}
-          </div>
+    {/* Center Links with technical divider styling */}
+    <div className="hidden lg:flex items-center gap-12">
+        {navLinks.map(link => (
+            <button key={link.id} onClick={() => handleScroll(link.id)} className="group relative py-2">
+                <span className="text-[10px] font-black uppercase tracking-[0.2em]">{link.name}</span>
+                <span className="absolute bottom-0 left-0 w-0 h-px bg-marathon-teal transition-all duration-300 group-hover:w-full" />
+            </button>
+        ))}
+    </div>
 
-          {/* 3. ACTIONS (Right Side) */}
-          <div className={`flex items-center gap-4 md:gap-6 z-50 ${isLightSection ? 'text-black' : 'text-white'}`}>
-            <button onClick={() => toggleSearch(true)} className="hover:text-marathon-teal transition-colors">
-              <Search size={20} />
-            </button>
-            <button 
-              onClick={() => document.getElementById('booking')?.scrollIntoView({ behavior: 'smooth'})}
-              className="hidden md:flex bg-marathon-teal text-black font-black text-[10px] uppercase px-8 py-4 rounded-full shadow-lg hover:scale-105 transition-all"
-            >
-              Book Service
-            </button>
-            <button className="lg:hidden" onClick={() => setIsMobileMenuOpen(true)}>
-                <Menu size={24} />
-            </button>
-          </div>
-        </div>
-      </motion.header>
+    <div className="flex items-center gap-8">
+        <Search size={18} className="cursor-pointer hover:text-marathon-teal transition-all" />
+        <button className="bg-black text-white px-8 py-3 rounded-full text-[10px] font-black uppercase tracking-widest transition-all hover:bg-marathon-teal hover:text-black shadow-lg active:scale-95">
+            Connect
+        </button>
+    </div>
+  </div>
+</motion.header>
 
       {/* MOBILE MENU */}
       <AnimatePresence>
