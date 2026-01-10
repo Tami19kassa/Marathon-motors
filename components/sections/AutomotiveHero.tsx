@@ -1,83 +1,59 @@
 "use client";
 import { motion } from "framer-motion";
-import Image from "next/image";
-import { Zap, Gauge, ArrowRight } from "lucide-react";
+import { Zap, Gauge, Shield } from "lucide-react";
 
 export const AutomotiveHero = ({ vehicle }: { vehicle: any }) => {
   return (
-    <div className="relative w-full h-full flex items-center overflow-hidden bg-marathon-dark">
-      {/* 1. BACKGROUND DECORATION */}
-      <div className="absolute inset-0 z-0">
-         <div className="absolute inset-0 bg-linear-to-r from-marathon-dark via-marathon-dark/40 to-transparent z-10" />
-         {/* Atmospheric Ambient Glow */}
-         <div className="absolute top-1/2 left-1/4 -translate-y-1/2 w-[600px] h-[600px] bg-marathon-teal/10 rounded-full blur-[120px]" />
-      </div>
-
-      <div className="relative z-20 max-w-[1400px] mx-auto px-6 md:px-12 w-full grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
-        
-        {/* 2. TEXT CONTENT */}
+    <div className="relative w-full h-full flex items-center px-6 md:px-20">
+      
+      {/* 1. TYPOGRAPHY OVERLAY */}
+      <div className="relative z-20 max-w-4xl pt-20">
         <motion.div
-          initial={{ opacity: 0, x: -50 }}
-          animate={{ opacity: 1, x: 0 }}
-          transition={{ duration: 0.8, ease: "easeOut" }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.8 }}
           className="space-y-6"
         >
-          <div className="flex items-center gap-3">
-             <span className="bg-marathon-teal text-black px-3 py-1 text-[10px] font-black uppercase tracking-tighter rounded-sm">
-               {vehicle.category} Division
+          <div className="flex items-center gap-4">
+             <div className="h-[1px] w-12 bg-marathon-teal" />
+             <span className="text-marathon-teal font-black uppercase tracking-[0.5em] text-[10px]">
+                Marathon × Hyundai Ethiopia
              </span>
-             <span className="text-white/40 text-xs font-bold uppercase tracking-widest">Assembled in Addis</span>
           </div>
 
-          <h1 className="text-6xl md:text-8xl font-heading font-black italic text-white leading-[0.9] uppercase">
+          <h1 className="text-7xl md:text-[11vw] font-heading font-black italic text-white leading-[0.85] uppercase tracking-tighter">
             {vehicle.name}
           </h1>
 
-          <p className="text-slate-400 text-lg md:text-xl max-w-lg leading-relaxed">
-            {vehicle.tagline || "Experience the pinnacle of Ethiopian engineering and Hyundai innovation."}
+          <p className="text-slate-400 text-lg md:text-2xl max-w-xl font-medium leading-relaxed italic">
+            {vehicle.tagline || "The standard of engineering endurance."}
           </p>
 
-          {/* DYNAMIC SPECS BAR */}
-          <div className="flex gap-8 pt-4">
-             <div className="space-y-1">
-                <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">Range</p>
-                <div className="flex items-center gap-2 text-white font-heading font-bold text-xl">
-                   <Zap size={16} className="text-marathon-teal" /> {vehicle.specs?.range || "N/A"}
-                </div>
-             </div>
-             <div className="w-px h-10 bg-white/10" />
-             <div className="space-y-1">
-                <p className="text-slate-500 text-[10px] font-black uppercase tracking-widest">0-100 km/h</p>
-                <div className="flex items-center gap-2 text-white font-heading font-bold text-xl">
-                   <Gauge size={16} className="text-marathon-teal" /> {vehicle.specs?.acceleration || "N/A"}
-                </div>
-             </div>
-          </div>
-
-          <div className="flex gap-4 pt-8">
-             <button className="bg-marathon-teal text-black font-black px-10 py-5 rounded-full hover:shadow-glow transition-all active:scale-95 flex items-center gap-3">
-                BOOK TEST DRIVE <ArrowRight size={18} />
-             </button>
+          {/* HORIZONTAL SPECS (Like the reference image) */}
+          <div className="flex flex-wrap gap-12 pt-10 border-t border-white/5 mt-10">
+             <SpecItem label="Electric Range" value={vehicle.specs?.range || "---"} icon={<Zap size={14}/>} />
+             <SpecItem label="Acceleration" value={vehicle.specs?.acceleration || "---"} icon={<Gauge size={14}/>} />
+             <SpecItem label="Energy/Battery" value={vehicle.specs?.battery || "---"} icon={<Shield size={14}/>} />
           </div>
         </motion.div>
+      </div>
 
-        {/* 3. FLOATING VEHICLE IMAGE */}
-        <motion.div
-          initial={{ opacity: 0, x: 100, scale: 0.8 }}
-          animate={{ opacity: 1, x: 0, scale: 1 }}
-          transition={{ duration: 1, delay: 0.2, ease: "circOut" }}
-          className="relative aspect-video lg:aspect-auto"
-        >
-          <Image 
-             src={vehicle.transparentPngUrl || vehicle.imageUrl} 
-             alt={vehicle.name}
-             width={1000}
-             height={500}
-             className="w-full h-auto drop-shadow-[0_30px_50px_rgba(0,229,255,0.2)]"
-             priority
-          />
-        </motion.div>
+      {/* 2. 3D BACKGROUND GRADIENTS */}
+      {/* The 3D car is rendered by the VehicleCanvas in page.tsx, 
+          which sits UNDER this transparent text layer */}
+      <div className="absolute inset-0 pointer-events-none">
+          <div className="absolute inset-0 bg-gradient-to-r from-[#050505] via-[#050505]/40 to-transparent z-10" />
+          <div className="absolute bottom-0 left-0 w-full h-64 bg-gradient-to-t from-[#050505] to-transparent z-10" />
       </div>
     </div>
   );
 };
+
+const SpecItem = ({ label, value, icon }: { label: string, value: string, icon: React.ReactNode }) => (
+    <div className="space-y-2">
+        <p className="text-slate-500 font-black uppercase tracking-widest text-[9px] flex items-center gap-2">
+            {icon} {label}
+        </p>
+        <p className="text-2xl font-heading font-bold italic text-white uppercase">{value}</p>
+    </div>
+);
