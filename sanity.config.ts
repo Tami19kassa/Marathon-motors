@@ -1,5 +1,7 @@
+'use client'
+
 /**
- * This configuration is used to for the Sanity Studio that’s mounted on the `\app\studio\[[...tool]]\page.tsx` route
+ * This configuration is used to for the Sanity Studio that’s mounted on the `/app/studio/[[...tool]]/page.tsx` route
  */
 
 import {visionTool} from '@sanity/vision'
@@ -14,15 +16,14 @@ export default defineConfig({
   basePath: '/studio',
   projectId,
   dataset,
-  // Add and edit the content schema in the './sanity/schemaTypes' folder
+  // This imports your vehicle, news, and event schemas
   schema,
   plugins: [
-    // FIX: Remove '{structure}' from inside structureTool()
-    // This tells Sanity to just list whatever schemas it finds in schemaTypes/index.ts
+    // FIX: We removed the '{structure}' argument.
+    // Now Sanity will simply list all your available content types automatically.
     structureTool(),
     
     // Vision is a tool that lets you query your content with GROQ in the studio
-    // https://www.sanity.io/docs/the-vision-plugin
     visionTool({defaultApiVersion: apiVersion}),
   ],
 })
