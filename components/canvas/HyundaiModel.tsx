@@ -3,11 +3,9 @@
 import { useGLTF } from "@react-three/drei";
 import { useFrame } from "@react-three/fiber";
 import { useRef, useLayoutEffect } from "react";
-import * as THREE from "three";
+import * as THREE from "three"; // Ensure this is imported
 import { useConfigStore } from "@/lib/config-store";
 
-// FIX: Instead of defining the loader inside the component (which causes TS errors),
-// we set the Decoder Path globally. This is faster and error-free.
 useGLTF.setDecoderPath("https://www.gstatic.com/draco/versioned/decoders/1.5.5/");
 
 interface HyundaiModelProps {
@@ -16,9 +14,7 @@ interface HyundaiModelProps {
 }
 
 export const HyundaiModel = ({ scrollProgress, url }: HyundaiModelProps) => {
-  // Use the provided URL from Sanity, or fallback to local
   const { scene } = useGLTF(url || "/models/car.glb");
-  
   const group = useRef<THREE.Group>(null);
   const activeColor = useConfigStore((state) => state.activeColor);
 
@@ -27,46 +23,40 @@ export const HyundaiModel = ({ scrollProgress, url }: HyundaiModelProps) => {
       if ((obj as THREE.Mesh).isMesh) {
         const mesh = obj as THREE.Mesh;
         
-        // Target automotive paint layers
-        if (
-          mesh.name.toLowerCase().includes("body") || 
-          mesh.name.toLowerCase().includes("paint") ||
-          mesh.name.toLowerCase().includes("exterior")
-        ) {
-          mesh.material = new THREE.MeshStandardMaterial({
-            color: activeColor.hex,
-            metalness: activeColor.metalness,
-            roughness: activeColor.roughness,
-            envMapIntensity: 1.5,
-          });
-        }
+        // Handle both single materials and arrays of materials
+        const materials = Array.isArray(mesh.material) ? mesh.material : [mesh.material];
+
+        materials.forEach((mat) => {
+          if (mat instanceof THREE.MeshStandardMaterial) {
+            // FIX: Restore visual fidelity (colorSpace)
+            if (mat.map) mat.map.colorSpace = THREE.SRGBColorSpace;
+            
+            // Apply paint only to the exterior body parts
+            const name = mesh.name.toLowerCase();
+            if (name.includes("body") || name.includes("paint") || name.includes("exterior")) {
+              mat.color.set(activeColor.hex);
+              mat.metalness = activeColor.metalness ?? 0.9;
+              mat.roughness = activeColor.roughness ?? 0.2;
+              mat.envMapIntensity = 2;
+            }
+          }
+        });
       }
     });
   }, [scene, activeColor]);
 
   useFrame((state) => {
     if (!group.current) return;
-
-    // Automotive 360 rotation based on scroll
     const targetRotation = scrollProgress * Math.PI * 2;
-    group.current.rotation.y = THREE.MathUtils.lerp(
-      group.current.rotation.y, 
-      targetRotation, 
-      0.05
-    );
-
-    // Subtle floating engine idle animation
+    group.current.rotation.y = THREE.MathUtils.lerp(group.current.rotation.y, targetRotation, 0.03);
+    
     const t = state.clock.getElapsedTime();
-    group.current.position.y = THREE.MathUtils.lerp(
-      group.current.position.y, 
-      Math.sin(t / 2) / 15 - 1, 
-      0.1
-    );
+    group.current.position.y = Math.sin(t / 2) / 20 - 1.5;
   });
 
   return (
     <group ref={group} dispose={null}>
-      <primitive object={scene} scale={2.2} position={[0, -1, 0]} />
+      <primitive object={scene} scale={3} position={[0, -1.5, 0]} />
     </group>
   );
 };
