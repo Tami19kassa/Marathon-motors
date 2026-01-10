@@ -44,9 +44,22 @@ export const VehicleShowcase = ({ vehicle, progress }: { vehicle: Vehicle, progr
               <div className="w-64 h-[2px] bg-white/10 rounded-full overflow-hidden">
                 <motion.div 
                   className="h-full bg-marathon-teal shadow-glow"
-                  animate={{ width: `${loadProgress}%` }}
+                        animate={{ width: `${loadProgress}%` }}
+                        role="progressbar"
+                        aria-valuenow={loadProgress}
+                        aria-valuemin={0}
+                        aria-valuemax={100}
                 />
               </div>
+                    <div className="absolute -top-8 left-1/2 -translate-x-1/2 text-xs text-white/80">
+                      {Math.round(loadProgress)}%
+                    </div>
+                    {/* Show transparent PNG preview while loading if available */}
+                    {vehicle.transparentPngUrl && (
+                      <div className="absolute right-8 top-8 w-40 h-24 overflow-hidden rounded-md border border-white/6">
+                        <Image src={vehicle.transparentPngUrl} alt={`${vehicle.name} preview`} fill className="object-contain" />
+                      </div>
+                    )}
             </div>
           </motion.div>
         )}

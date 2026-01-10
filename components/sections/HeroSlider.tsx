@@ -34,23 +34,29 @@ export const HeroSlider = ({ vehicles }: { vehicles: Vehicle[] }) => {
         </motion.div>
       </AnimatePresence>
 
-      {/* EDITORIAL INDICATORS */}
-      <div className="absolute bottom-12 left-12 z-50 flex items-end gap-12">
-        <div className="flex flex-col">
+      {/* EDITORIAL INDICATORS + THUMBNAILS */}
+      <div className="absolute bottom-12 left-12 z-50 flex items-end gap-8">
+        <div className="flex flex-col items-start">
             <span className="text-[10px] font-black text-marathon-teal uppercase tracking-[0.4em] mb-4">Current Series</span>
-            <div className="flex gap-3">
-            {vehicles.map((_, i) => (
+            <div className="flex gap-3 items-center">
+              {vehicles.map((v, i) => (
                 <button
-                key={i}
-                onClick={() => setIndex(i)}
-                className={`h-[3px] transition-all duration-700 rounded-full ${
-                    i === index ? 'w-16 bg-marathon-teal' : 'w-4 bg-white/20'
-                }`}
-                />
-            ))}
+                  key={i}
+                  onClick={() => setIndex(i)}
+                  className={`group relative h-12 w-20 overflow-hidden rounded-lg border border-white/6 bg-white/2 transition-all ${i === index ? 'ring-2 ring-marathon-teal scale-105' : 'hover:scale-102'} `}
+                >
+                  {v.transparentPngUrl ? (
+                    // thumbnail if available
+                    <img src={v.transparentPngUrl} alt={v.name} className="object-cover w-full h-full" />
+                  ) : (
+                    <div className="w-full h-full bg-gradient-to-br from-[#111] to-[#000]" />
+                  )}
+                  <div className="absolute bottom-0 left-0 right-0 bg-black/30 text-xs text-white/80 text-center py-1">{v.name}</div>
+                </button>
+              ))}
             </div>
         </div>
-        
+
         <div className="hidden md:block">
             <p className="text-white/20 font-heading font-black italic text-6xl leading-none select-none">
                 0{index + 1}

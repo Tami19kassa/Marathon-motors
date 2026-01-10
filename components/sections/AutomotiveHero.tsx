@@ -29,11 +29,22 @@ export const AutomotiveHero = ({ vehicle }: { vehicle: any }) => {
             {vehicle.tagline || "The standard of engineering endurance."}
           </p>
 
+          <div className="flex items-center gap-4 mt-2">
+            <button className="bg-marathon-teal text-black font-bold uppercase px-6 py-3 rounded-md shadow-glow hover:scale-[1.02] transition-transform">
+              Explore Specs
+            </button>
+            <button className="border border-white/10 text-white font-semibold uppercase px-5 py-3 rounded-md backdrop-blur-sm hover:bg-white/5 transition-colors">
+              Configure Color
+            </button>
+          </div>
+
           {/* HORIZONTAL SPECS (Like the reference image) */}
-          <div className="flex flex-wrap gap-12 pt-10 border-t border-white/5 mt-10">
-             <SpecItem label="Electric Range" value={vehicle.specs?.range || "---"} icon={<Zap size={14}/>} />
-             <SpecItem label="Acceleration" value={vehicle.specs?.acceleration || "---"} icon={<Gauge size={14}/>} />
-             <SpecItem label="Energy/Battery" value={vehicle.specs?.battery || "---"} icon={<Shield size={14}/>} />
+          <div className="pt-10 mt-10">
+            <div className="inline-grid grid-cols-3 gap-6 bg-white/3 backdrop-blur rounded-xl p-6 border border-white/6">
+              <SpecItem label="Electric Range" value={vehicle.specs?.range || "---"} icon={<Zap size={14}/>} />
+              <SpecItem label="Acceleration" value={vehicle.specs?.acceleration || "---"} icon={<Gauge size={14}/>} />
+              <SpecItem label="Energy/Battery" value={vehicle.specs?.battery || "---"} icon={<Shield size={14}/>} />
+            </div>
           </div>
         </motion.div>
       </div>
