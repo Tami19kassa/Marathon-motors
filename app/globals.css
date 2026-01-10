@@ -1,26 +1,44 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@theme {
+  /* THE AUTOMOTIVE PALETTE */
+  --color-marathon-dark: #050505;    /* Asphalt Black */
+  --color-marathon-steel: #0f1115;   /* Metallic Texture */
+  --color-marathon-teal: #00e5ff;    /* EV Energy Pulse */
+  --color-marathon-gold: #facc15;    /* Haile's Olympic Gold */
+  
+  /* TYPOGRAPHY */
+  --font-sans: "Inter Tight", system-ui;
+  --font-heading: "Space Grotesk", sans-serif; /* Wide, Technical font */
+  
+  /* SHADOWS */
+  --shadow-glow: 0 0 40px -10px rgba(0, 229, 255, 0.3);
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+@layer base {
+  body {
+    background-color: var(--color-marathon-dark);
+    color: #ffffff;
+    -webkit-font-smoothing: antialiased;
+    overflow-x: hidden;
+  }
+  
+  /* Technical Grid Background Overlay */
+  body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    background-image: radial-gradient(circle at 2px 2px, rgba(255,255,255,0.02) 1px, transparent 0);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: -1;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* GSAP Smooth Scroll Support */
+html.lenis {
+  height: auto;
+}
+.lenis-smooth {
+  scroll-behavior: auto !important;
 }
