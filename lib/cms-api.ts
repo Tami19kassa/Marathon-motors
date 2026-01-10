@@ -55,5 +55,17 @@ export const cmsApi = {
       "imageUrl": image.asset->url
     }`;
     return await client.fetch(query, {}, { next: { revalidate: 0 } });
-  }
+  },
+
+  getTestimonials: async () => {
+  const query = `*[_type == "testimonial"]{
+    _id,
+    name,
+    role,
+    quote,
+    rating,
+    "avatarUrl": avatar.asset->url
+  }`;
+  return await client.fetch(query, {}, { next: { revalidate: 0 } });
+},
 };

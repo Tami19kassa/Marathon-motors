@@ -5,70 +5,100 @@ import { Showroom } from "@/components/sections/Showroom";
 import { Ecosystem } from "@/components/sections/Ecosystem";
 import { HaileLegacy } from "@/components/sections/HaileLegacy";
 import { NewsAndEvents } from "@/components/sections/NewsAndEvents";
+import { Testimonials } from "@/components/sections/Testimonials";
 import { cmsApi } from "@/lib/cms-api";
-import { Suspense } from "react";
 
-// Force fresh data from Sanity on every request
+// FORCE FRESH DATA: Ensures every time you Publish in Sanity, the site updates instantly
 export const dynamic = "force-dynamic";
 
 export default async function Home() {
-  // 1. Parallel Data Fetching (Fastest Method)
-  const [vehicles, news, events] = await Promise.all([
+  // 1. DATA ACQUISITION: Parallel fetching for zero-lag loading
+  const [vehicles, news, events, testimonials] = await Promise.all([
     cmsApi.getVehicles(),
     cmsApi.getNews(),
-    cmsApi.getEvents()
+    cmsApi.getEvents(),
+    cmsApi.getTestimonials()
   ]);
 
-  // 2. Safety Check: If Sanity is empty, show a professional "Under Maintenance" or empty state
+  // 2. ERROR BOUNDARY: Fallback if Sanity is disconnected
   if (!vehicles || vehicles.length === 0) {
     return (
       <div className="h-screen bg-marathon-dark flex items-center justify-center">
-        <p className="text-marathon-teal font-heading italic animate-pulse">
-          INITIALIZING SHOWROOM ASSETS...
-        </p>
+        <div className="text-center">
+          <div className="w-16 h-16 border-4 border-marathon-teal border-t-transparent rounded-full animate-spin mx-auto mb-4" />
+          <p className="text-marathon-teal font-heading italic tracking-widest uppercase text-xs">
+            Synchronizing Showroom Assets...
+          </p>
+        </div>
       </div>
     );
   }
 
   return (
     <main className="bg-marathon-dark min-h-screen selection:bg-marathon-teal selection:text-black">
-      {/* 
-          High-Z-Index UI 
-          We wrap them in a fragment to keep them above the scrollable content
-      */}
-      <Navbar />
       
+      {/* --- GLOBAL UI LAYER --- */}
+      <Navbar />
+
       {/* 
-          1. HERO SECTION (Auto-Scrolling 3D Models)
-          This component now handles the 'VehicleShowcase' logic internally 
-          to provide the 2D-to-3D transition for every car.
+          --- SECTION 1: DYNAMIC HERO SLIDER --- 
+          Automatically cycles through all car models uploaded to Sanity.
+          Features the 2D-to-3D progressive loading engine.
       */}
       <section id="home">
         <HeroSlider vehicles={vehicles} />
       </section>
 
       <div className="relative z-10">
-        {/* 2. THE 3S ECOSYSTEM (Technical Blueprint Sections) */}
+        
+        {/* 
+            --- SECTION 2: THE 3S ECOSYSTEM --- 
+            Technical breakdown of Sales, Service, and Spare Parts.
+            Aesthetic: Technical Blueprint / Blueprint Lines.
+        */}
         <section id="technology">
            <Ecosystem />
         </section>
 
-        {/* 3. INTERACTIVE FILTERABLE SHOWROOM (360° Inspection) */}
+        {/* 
+            --- SECTION 3: THE EDITORIAL SHOWROOM --- 
+            Directly matches the high-end 4-column UI from your reference image.
+            Aesthetic: Pure White / High-Contrast Serif Typography.
+            Feature: Integrated 360° Interactive Inspection.
+        */}
         <section id="showroom">
            <Showroom vehicles={vehicles} />
         </section>
 
-        {/* 4. HAILE GEBRSELASSIE LEGACY STORY (GSAP Horizontal) */}
+        {/* 
+            --- SECTION 4: VOICE OF OWNERSHIP (TESTIMONIALS) --- 
+            Grid of Trust layout using massive quotation marks.
+            Aesthetic: Clean / Magazine Style.
+        */}
+        <section id="testimonials">
+            <Testimonials items={testimonials} />
+        </section>
+
+        {/* 
+            --- SECTION 5: THE HAILE GEBRSELASSIE LEGACY --- 
+            Horizontal GSAP Scroll explaining the connection between 
+            Olympic endurance and Automotive engineering.
+            Aesthetic: Grayscale / High Action.
+        */}
         <section id="legacy">
            <HaileLegacy />
         </section>
 
-        {/* 5. DYNAMIC NEWS & EVENTS (Editorial Grid) */}
+        {/* 
+            --- SECTION 6: DYNAMIC NEWS & EVENTS --- 
+            Editorial grid of the latest company updates and calendar items.
+            Aesthetic: Corporate / Newsroom.
+        */}
         <section id="news">
            <NewsAndEvents news={news} events={events} />
         </section>
 
-        {/* 6. GLOBAL FOOTER */}
+        {/* --- GLOBAL FOOTER --- */}
         <Footer />
       </div>
     </main>
